@@ -291,7 +291,7 @@ After failover, the dynamic routes using `us-east1-vmseries` as willå coverge t
 
 2. Click to **BGP** and uncheck **Enable** and click **OK**.
 
-    <img src="images/image14.png" width=75%>
+    <img src="images/image14.png" width=70%>
 
 3. In the top right corner, click **Commit → Commit** to apply the changes. 
 
