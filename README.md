@@ -149,7 +149,7 @@ Review the VM-Series BGP configuration including the route exchange with the Clo
 
 2. Next to the `gcp-vr`, select **More Runtime Stats**.
 
-    <img src="images/image01.png">
+    <img src="images/image01.png" width=75%>
 
     > :bulb: **Information** <br> 
     > The virtual router contains all of routing configurations on the VM-Series.  To view the BGP configuration, open `gcp-vr` and select the **BGP** tab.
@@ -158,10 +158,10 @@ Review the VM-Series BGP configuration including the route exchange with the Clo
 3. Go to **BGP → Peer** to view the status of the BGP peering sessions with each region's cloud router.
 
     **us-east1**
-    <img src="images/image02.png">
+    <img src="images/image02.png" width=75%>
 
     **us-west1**
-    <img src="images/image03.png">
+    <img src="images/image03.png" width=75%>
 
     > :bulb: **Information** <br> 
     > Both connections should be listed as `Established`.
@@ -170,10 +170,10 @@ Review the VM-Series BGP configuration including the route exchange with the Clo
 4. Click **Local RIB** to view the routing information the firewall has learned and selected for use.
     
     **us-east1**
-    <img src="images/image04.png">
+    <img src="images/image04.png" width=75%>
 
     **us-west1**
-    <img src="images/image05.png">
+    <img src="images/image05.png" width=75%>
 
     > :bulb: **Information** <br> 
     > Routes with the `*` flag are preferred routes. 
@@ -182,10 +182,10 @@ Review the VM-Series BGP configuration including the route exchange with the Clo
 4. Click **RIB Out** to view the routes exported by the VM-Series to the Cloud Routers.
 
     **us-east1**
-    <img src="images/image06.png">
+    <img src="images/image06.png" width=75%>
 
     **us-west1**
-    <img src="images/image07.png">
+    <img src="images/image07.png" width=75%>
 
     > :bulb: **Information** <br> 
     > Both firewalls should be exporting a default route for each of their BGP peers on the Cloud Router.
@@ -197,7 +197,7 @@ Review the connection status of the Cloud Routers to the VM-Series firewalls in 
 
 2. Click **Spokes** and select the `vmseries-us-east1-spoke` router appliance.
 
-    <img src="images/image08.png">
+    <img src="images/image08.png" width=90%>
 
 2. Within each spoke, open `peer0` & `peer1` to view the peering status along with any advertised routes. 
 
@@ -218,7 +218,7 @@ View the routes propagated by the VM-Series to the route table of `vpc1` for bot
 
 2. Set the **VPC** to `vpc1` & **Region** to `us-west1` to view the effective routes for `us-east1` traffic.
     
-    <img src="images/image10.png">
+    <img src="images/image10.png" width=80%>
     
     > :bulb: **Information** <br> 
     > The preferred default route (priority `0`) for `us-east1` uses the `us-east1-vmseries` as the next hop.
@@ -226,7 +226,7 @@ View the routes propagated by the VM-Series to the route table of `vpc1` for bot
 
 3. Set the **Region** to `us-west1` to view the effective routes for `us-west1` traffic.
 
-    <img src="images/image11.png">
+    <img src="images/image11.png" width=80%>
 
     > :bulb: **Information** <br> 
     > The preferred default route (priority `0`) for `us-west1` uses the `us-west1-vmseries` as the next hop.
@@ -262,10 +262,10 @@ Verify traffic originating from `us-east1` travereses the `us-east1-vmseries` an
     ```
 
     **us-east1**
-    <img src="images/image12.png">
+    <img src="images/image12.png" width=75%>
 
     **us-west1**
-    <img src="images/image13.png">
+    <img src="images/image13.png" width=75%>
 
     > :bulb: **Information** <br> 
     > You should see that traffic from `us-east1-vm` (`10.1.0.5`) uses the preferred route to  `us-east1-vmseries` and traffic from `us-west1-vm` (`10.1.0.21`) uses the firewall in `us-west1`. 
@@ -277,13 +277,13 @@ Simulate a failure within the `us-east1` region by disabling BGP on the `us-east
 
 After failover, the dynamic routes using `us-east1-vmseries` as willå coverge to use to use `us-west1-vmseries`.
 
-<img src="images/diagram_failover.png">
+<img src="images/diagram_failover.png" width=75%>
 
 1. On `us-east1-vmseries`, go to **Network → Virtual Routers** and select `gcp-vr`.
 
 2. Click to **BGP** and uncheck **Enable** and click **OK**.
 
-    <img src="images/image14.png">
+    <img src="images/image14.png" width=75%>
 
 3. In the top right corner, click **Commit → Commit** to apply the changes. 
 
@@ -297,7 +297,7 @@ Verify the `vpc1` route table has been updated to route `us-east1` traffic throu
 
 2. Set **Network** to `vpc1` and **Region** to `us-east1`.
     
-    <img src="images/image15.png">
+    <img src="images/image15.png" width=75%>
 
     > :bulb: **Information** <br>
     > The route table for `us-east1` traffic should now have a default route using `us-west1-vmseries` as the next hop. 
@@ -305,7 +305,7 @@ Verify the `vpc1` route table has been updated to route `us-east1` traffic throu
 
 3. On `us-west1-vmseries`, go to **Monitor → Traffic**. 
 
-    <img src="images/image16.png">
+    <img src="images/image16.png" width=75%>
 
     > :bulb: **Information** <br>
     > The pings from `us-east1-vm` (`10.1.0.5`) should now appear within the `us-west1-vmseries` traffic logs. 
