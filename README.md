@@ -164,19 +164,11 @@ View the VM-Series BGP configuration and review the progated routes to the Cloud
 
 3. Go to **BGP → Peer** to view the status of the BGP peering sessions with each region's cloud router.
 
-    <figure>
-    <img
-    src="images/image02.png"
-    alt="us-east-vmseries">
-    <figcaption>us-east-vmseries</figcaption>
-    </figure>
+    **us-east1 VM-Series**
+    <img src="images/image02.png">
 
-    <figure>
-    <img
-    src="images/image03.png"
-    alt="us-west-vmseries">
-    <figcaption>us-west-vmseries</figcaption>
-    </figure>
+    **us-west1 VM-Series**
+    <img src="images/image03.png">
 
     > :bulb: **Information** <br> 
     > Both connections should be listed as `Established`.
