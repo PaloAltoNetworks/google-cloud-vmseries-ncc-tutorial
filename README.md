@@ -1,10 +1,12 @@
 # Google Cloud NCC & VM-Series Tutorial
 
-This tutorial demonstrates how to perform cross-region failover by connecting Palo Alto Networks VM-Series Firewalls as a router appliance spoke to a Network Connectivity Center hub. Beyond cross-region failover, using the VM-Series as a router appliance spoke supports a variety of other use cases, including:
+This tutorial shows how to perform cross-region failover by connecting VM-Series as a router appliance spoke to a Network Connectivity Center hub. 
+
+Beyond cross-region failover, using the VM-Series as a router appliance spoke supports a variety of other use cases, including:
 
 * Connecting remote networks to Google Cloud while providing full BGP route exchange.
 * Creating a global WAN network secured with VM-Series deployed in Google Cloud.
-* Facilitating cross-region or disaster recovery network operations with regionally dispersed VM-Series.
+* Facilitating disaster recovery network operations with regionally dispersed VM-Series.
 
 This tutorial is intended for network administrators, solution architects, and security professionals who are familiar with [Compute Engine](https://cloud.google.com/compute) and [Virtual Private Cloud (VPC) networking](https://cloud.google.com/vpc).
 
@@ -16,19 +18,11 @@ Below is a diagram of the tutorial.
 
 <img src="images/diagram.png">
 
-Three VPCs are created (`mgmt`, `untrust`, and `vpc1`), each containing a subnet across the `us-east1` and `us-west1` regions. A VM-Series firewall is deployed in each region (`us-east1-vmseries` and `us-west1-vmseries`), with interfaces in each VPC. The firewall's interface in `vpc1` is configured as a router appliance spoke connected to a Network Connectivity Center hub.
-
-In each region, the firewall is a BGP peer with a Cloud Router in the same region, enabling dynamic route exchange between the firewalls and the VPC route table. A default route is propagated from both firewalls to the `vpc1` route table, steering workload traffic through the firewall in the workload's region. In the event of a regional failure, traffic from the affected region automatically fails over to the firewall in the healthy region through dynamic route propagation.
-
-
-
-
-| VPC       | Description                                                                                                                                                                                                           |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `untrust` | Contains the VM-Series untrust dataplane interfaces.  Both outbound & inbound internet traffic from `vpc1` traverses this interface.                                                                                  |
-| `mgmt`    | Contains the VM-Series maagement interfaces.  This interface provides access to the firewall's user interface and terminal console.                                                                                   | 
-| `vpc1`    | Contains the VM-Series trust dataplane interfaces.  These interfaces are BGP peers with a cloud router in each region where routes are exchanged to steer workload traffic to the VM-Series firewalls.                |
-
+* Three VPCs are created (`mgmt`, `untrust`, and `vpc1`), each containing a subnet across the `us-east1` and `us-west1` regions. 
+* A VM-Series firewall is deployed in each region (`us-east1-vmseries` and `us-west1-vmseries`), with interfaces in each VPC. 
+* The firewall's interface in `vpc1` is configured as a router appliance spoke connected to a Network Connectivity Center hub.
+* In each region, the firewall is a BGP peer with a Cloud Router in the same region, enabling dynamic route exchange between the firewalls and the VPC route table.
+* In the event of a regional failure, traffic from the affected region automatically fails over to the firewall in the healthy region through dynamic route propagation.
 
 ## Requirements
 
@@ -70,7 +64,6 @@ The following is required for this tutorial:
     | `project_id`                | The Project ID within Google Cloud.                                                  | `null`                         |
     | `public_key_path`           | The local path of the public key you previously created                              | `~/.ssh/vmseries-tutorial.pub` |
     | `mgmt_allow_ips`            | A list of IPv4 addresses which have access to the VM-Series management interface.    | `["0.0.0.0/0"]`                |
-    | `create_spoke_networks`     | Set to `false` if you do not want to create the workload virtual machines.           | `true`                         |
     | `vmseries_image_name`       | Set to the VM-Series image you want to deploy.                                       | `vmseries-flex-bundle2-1022h2` |
 
 > [!TIP]
@@ -105,8 +98,8 @@ When no further changes are necessary in the configuration, deploy the resources
 
     SSH_VMSERIES_REGION1 = "ssh admin@<EXTERNAL_IP> -i ~/.ssh/vmseries-tutorial"
     SSH_VMSERIES_REGION2 = "ssh admin@<EXTERNAL_IP> -i ~/.ssh/vmseries-tutorial"
-    SSH_WORKLOAD_VM_REGION1 = "gcloud compute ssh paloalto@us-central1-vm --zone=us-central1-a"
-    SSH_WORKLOAD_VM_REGION2 = "gcloud compute ssh paloalto@us-east4-vm --zone=us-east4-a"
+    SSH_VM_REGION1       = "gcloud compute ssh paloalto@us-central1-vm --zone=us-central1-a"
+    SSH_VM_REGION2       = "gcloud compute ssh paloalto@us-east4-vm --zone=us-east4-a"
     ```
 
 > [!IMPORTANT]
@@ -142,15 +135,15 @@ To access the VM-Series user interface, a password must be set for the `admin` u
 7. Repeat the process for `us-west1-vmseries` by using the `SSH_VMSERIES_REGION2` output value. 
 
 
-## Verify Configuration
+## Review Configuration
 
 Confirm the VM-Series and Cloud Routers are connected via BGP peering.  Then, verify routes are being exchanged over the peering connections.
 
 >[!NOTE]
 > The Terraform plan creates the Cloud Routers for each region within `vpc1`.  It also bootstraps the VM-Series with a configuration to automatically establish BGP with the cloud routers. 
 
-### Review VM-Series BGP Configuration
-View the VM-Series BGP configuration and review the progated routes to the Cloud Routers in each region. 
+### VM-Series BGP Configuration
+Review the VM-Series BGP configuration including the route exchange with the Cloud Routers.
 
 1. On each VM-Series, go to **Network → Virtual Routers**. 
 
@@ -195,18 +188,18 @@ View the VM-Series BGP configuration and review the progated routes to the Cloud
     <img src="images/image07.png">
 
     > :bulb: **Information** <br> 
-    > Both firewalls should be exporting 2 default routes for each of their BGP peers.
+    > Both firewalls should be exporting a default route for each of their BGP peers on the Cloud Router.
 
-### Review Network Connectivity Center Configuration
-View the connection status of the Cloud Router's BGP peers to the VM-Series firewalls in each region.  
+### Network Connectivity Center Configuration
+Review the connection status of the Cloud Routers to the VM-Series firewalls in each region.  
 
 1. In Google Cloud, go to **Network Connectivity → Network Connectivity Center**. 
 
-2. Click **Spokes** and select the `vmseries-us-east1-spoke` router appliance spoke.
+2. Click **Spokes** and select the `vmseries-us-east1-spoke` router appliance.
 
     <img src="images/image08.png">
 
-2. Open the BGP session name for both `peer0` and `peer1` to view the session's status and advertised routes from the Cloud Router to the VM-Series. 
+2. Within each spoke, open `peer0` & `peer1` to view the peering status along with any advertised routes. 
 
     <img src="images/image09.png">
 
@@ -214,7 +207,7 @@ View the connection status of the Cloud Router's BGP peers to the VM-Series fire
     > The Cloud Router in each region automatically propagates subnet routes to the VM-Series firewalls.
     <br>
 
-3. Repeat the process for the `vmseries-us-west1-spoke` router appliance spoke.
+3. Repeat the process for the `vmseries-us-west1-spoke` router appliance.
 
 
 
@@ -223,7 +216,7 @@ View the routes propagated by the VM-Series to the route table of `vpc1` for bot
 
 1. In Google Cloud, go to **VPC Network → Routes → Effective Routes**.
 
-2. To view the effective routes for `us-east1`, set **Network** to `vpc1` and **Region** to `us-east1`.
+2. Set the **VPC** to `vpc1` & **Region** to `us-west1` to view the effective routes for `us-east1` traffic.
     
     <img src="images/image10.png">
     
@@ -236,7 +229,7 @@ View the routes propagated by the VM-Series to the route table of `vpc1` for bot
     <img src="images/image11.png">
 
     > :bulb: **Information** <br> 
-    > The preferred default route (priority `0`) for `us-west1` traffic uses the `us-west1-vmseries` as the next hop.
+    > The preferred default route (priority `0`) for `us-west1` uses the `us-west1-vmseries` as the next hop.
     <br>
 
 ## Simulate Cross-Region Failover
@@ -250,20 +243,17 @@ Verify traffic originating from `us-east1` travereses the `us-east1-vmseries` an
 > [!NOTE]
 > You can redisplay the Terraform output values at anytime by running `terraform output` from the `google-cloud-vmseries-ncc-tutorial` directory. 
 
-1. Open two new Cloud Shell tabs (:heavy_plus_sign:). 
+1. Open two new Cloud Shell tabs :heavy_plus_sign:. 
 
-2. In the first tab, paste the `SSH_WORKLOAD_VM_REGION1` output to SSH to `us-east1-vm` (`10.1.0.5`) in `vpc1`.
+2. In the 1st tab, paste the `SSH_VM_REGION1` output to SSH to `us-east1-vm` (`10.1.0.5`).
 
-2. In the second tab, paste the `SSH_WORKLOAD_VM_REGION2` output to SSH to `us-west1-vm` (`10.1.0.21`) in `vpc1`.
+2. In the 2nd tab, paste the `SSH_VM_REGION2` output to SSH to `us-west1-vm` (`10.1.0.21`).
 
 4. On each VM, run a continuous ping to an internet address.
 
     ```
     ping 4.2.2.2
     ```
-
-> [!IMPORTANT]
-> Keep the pings running for the duration of the tutorial.**
 
 5. On each VM-Series, go to **Monitor → Traffic** and enter the following traffic filter.
 
@@ -283,7 +273,9 @@ Verify traffic originating from `us-east1` travereses the `us-east1-vmseries` an
 
 
 ### Simulate Failover
-Simulate a `us-east1` failure event by disabling BGP on the `us-east1-vmseries`. After failover, the dynamic routes using `us-east1-vmseries` as the next hop should coverge to use to use `us-west1-vmseries`.
+Simulate a failure within the `us-east1` region by disabling BGP on the `us-east1-vmseries`. 
+
+After failover, the dynamic routes using `us-east1-vmseries` as willå coverge to use to use `us-west1-vmseries`.
 
 <img src="images/diagram_failover.png">
 
@@ -298,7 +290,7 @@ Simulate a `us-east1` failure event by disabling BGP on the `us-east1-vmseries`.
 4. Wait for the commit to complete.
 
 
-### Review VPC Route Table & VM-Series Traffic logs
+### Review VPC Route Table & Traffic logs
 Verify the `vpc1` route table has been updated to route `us-east1` traffic through the `us-west1-vmseries`.
 
 1. In Google Cloud, go to **VPC Network → Routes → Effective Routes**.
