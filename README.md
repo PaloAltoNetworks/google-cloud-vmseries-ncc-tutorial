@@ -164,10 +164,10 @@ View the VM-Series BGP configuration and review the progated routes to the Cloud
 
 3. Go to **BGP → Peer** to view the status of the BGP peering sessions with each region's cloud router.
 
-    **us-east1 VM-Series**
+    **us-east1**
     <img src="images/image02.png">
 
-    **us-west1 VM-Series**
+    **us-west1**
     <img src="images/image03.png">
 
     > :bulb: **Information** <br> 
@@ -175,20 +175,12 @@ View the VM-Series BGP configuration and review the progated routes to the Cloud
     <br>
 
 4. Click **Local RIB** to view the routing information the firewall has learned and selected for use.
+    
+    **us-east1**
+    <img src="images/image04.png">
 
-    <figure>
-    <img
-    src="images/image04.png"
-    alt="us-east-vmseries">
-    <figcaption>us-east-vmseries</figcaption>
-    </figure>
-
-    <figure>
-    <img
-    src="images/image05.png"
-    alt="us-west-vmseries">
-    <figcaption>us-west-vmseries</figcaption>
-    </figure>
+    **us-west1**
+    <img src="images/image05.png">
 
     > :bulb: **Information** <br> 
     > Routes with the `*` flag are preferred routes. 
@@ -196,19 +188,11 @@ View the VM-Series BGP configuration and review the progated routes to the Cloud
 
 4. Click **RIB Out** to view the routes exported by the VM-Series to the Cloud Routers.
 
-    <figure>
-    <img
-    src="images/image06.png"
-    alt="us-east-vmseries">
-    <figcaption>us-east-vmseries</figcaption>
-    </figure>
+    **us-east1**
+    <img src="images/image06.png">
 
-    <figure>
-    <img
-    src="images/image07.png"
-    alt="us-west-vmseries">
-    <figcaption>us-west-vmseries</figcaption>
-    </figure>
+    **us-west1**
+    <img src="images/image07.png">
 
     > :bulb: **Information** <br> 
     > Both firewalls should be exporting 2 default routes for each of their BGP peers.
@@ -287,19 +271,11 @@ Verify traffic originating from `us-east1` travereses the `us-east1-vmseries` an
     ( zone.src eq 'vpc1' ) and ( addr.dst in '4.2.2.2' )
     ```
 
-    <figure>
-    <img
-    src="images/image12.png"
-    alt="us-east-vmseries">
-    <figcaption>us-east-vmseries</figcaption>
-    </figure>
+    **us-east1**
+    <img src="images/image12.png">
 
-    <figure>
-    <img
-    src="images/image13.png"
-    alt="us-west-vmseries">
-    <figcaption>us-west-vmseries</figcaption>
-    </figure>
+    **us-west1**
+    <img src="images/image13.png">
 
     > :bulb: **Information** <br> 
     > You should see that traffic from `us-east1-vm` (`10.1.0.5`) uses the preferred route to  `us-east1-vmseries` and traffic from `us-west1-vm` (`10.1.0.21`) uses the firewall in `us-west1`. 
