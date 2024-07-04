@@ -158,9 +158,11 @@ Review the VM-Series BGP configuration including the route exchange with the Clo
 3. Go to **BGP → Peer** to view the status of the BGP peering sessions with each region's cloud router.
 
     **us-east1**
+    <br>
     <img src="images/image02.png" width=75%>
 
     **us-west1**
+    <br>
     <img src="images/image03.png" width=75%>
 
     > :bulb: **Information** <br> 
@@ -170,9 +172,11 @@ Review the VM-Series BGP configuration including the route exchange with the Clo
 4. Click **Local RIB** to view the routing information the firewall has learned and selected for use.
     
     **us-east1**
+    <br>
     <img src="images/image04.png" width=75%>
 
     **us-west1**
+    <br>
     <img src="images/image05.png" width=75%>
 
     > :bulb: **Information** <br> 
@@ -182,9 +186,11 @@ Review the VM-Series BGP configuration including the route exchange with the Clo
 4. Click **RIB Out** to view the routes exported by the VM-Series to the Cloud Routers.
 
     **us-east1**
+    <br>
     <img src="images/image06.png" width=75%>
 
     **us-west1**
+    <br>
     <img src="images/image07.png" width=75%>
 
     > :bulb: **Information** <br> 
@@ -262,9 +268,11 @@ Verify traffic originating from `us-east1` travereses the `us-east1-vmseries` an
     ```
 
     **us-east1**
+    <br>
     <img src="images/image12.png" width=75%>
 
     **us-west1**
+    <br>
     <img src="images/image13.png" width=75%>
 
     > :bulb: **Information** <br> 
