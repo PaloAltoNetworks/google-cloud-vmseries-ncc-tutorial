@@ -2,7 +2,7 @@
 
 This tutorial shows how to perform cross-region failover by connecting VM-Series as a router appliance spoke to a Network Connectivity Center hub. 
 
-Beyond cross-region failover, using the VM-Series as a router appliance spoke supports a variety of other use cases, including:
+Beyond cross-region failover, using the VM-Series as a router appliance with NCC supports other use cases, including:
 
 * Connecting remote networks to Google Cloud while providing full BGP route exchange.
 * Creating a global WAN network secured with VM-Series deployed in Google Cloud.
@@ -18,10 +18,10 @@ Below is a diagram of the tutorial.
 
 <img src="images/diagram.png">
 
-* Three VPCs are created (`mgmt`, `untrust`, and `vpc1`), each containing a subnet across the `us-east1` and `us-west1` regions. 
-* A VM-Series firewall is deployed in each region (`us-east1-vmseries` and `us-west1-vmseries`), with interfaces in each VPC. 
-* The firewall's interface in `vpc1` is configured as a router appliance spoke connected to a Network Connectivity Center hub.
-* In each region, the firewall is a BGP peer with a Cloud Router in the same region, enabling dynamic route exchange between the firewalls and the VPC route table.
+* Three VPCs are created (`mgmt`, `untrust`, & `vpc1`), each containing a subnets in `us-east1` & `us-west1`. 
+* A VM-Series is deployed in each region (`us-east1-vmseries` & `us-west1-vmseries`) with NICs in each VPC. 
+* The firewall's `vpc1` NIC is configured as a router appliance spoke connected to a NCC hub.
+* The firewalls are BGP peers with a Cloud Router in each region to enable route exchange.
 * In the event of a regional failure, traffic from the affected region automatically fails over to the firewall in the healthy region through dynamic route propagation.
 
 ## Requirements
@@ -41,8 +41,8 @@ The following is required for this tutorial:
 
     ```
     gcloud services enable compute.googleapis.com
-    git clone https://github.com/PaloAltoNetworks/google-cloud-hub-spoke-tutorial
-    cd google-cloud-hub-spoke-tutorial
+    git clone https://github.com/PaloAltoNetworks/google-cloud-vmseries-ncc-tutorial
+    cd google-cloud-vmseries-ncc-tutorial
     ```
 
 2. Generate an SSH key.
@@ -137,7 +137,7 @@ To access the VM-Series user interface, a password must be set for the `admin` u
 
 ## Review Configuration
 
-Confirm the VM-Series and Cloud Routers are connected via BGP peering.  Then, verify routes are being exchanged over the peering connections.
+Confirm the VM-Series and Cloud Routers are connected BGP peers.  Then, verify routes exchanged between the peers.
 
 >[!NOTE]
 > The Terraform plan creates the Cloud Routers for each region within `vpc1`.  It also bootstraps the VM-Series with a configuration to automatically establish BGP with the cloud routers. 
