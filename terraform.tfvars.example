@@ -1,0 +1,16 @@
+# Required for VM-Series tutorial
+project_id           = null
+public_key_path      = "~/.ssh/vmseries-tutorial.pub"
+mgmt_allow_ips       = ["0.0.0.0/0"]
+create_workload_vms  = true
+vmseries_image       = "vmseries-flex-bundle2-1112h3"
+
+# Optional for VM-Series tutorial
+region1              = "us-east1"
+region1_cidr_mgmt    = "10.0.0.0/28"
+region1_cidr_untrust = "10.0.1.0/28"
+region1_cidr_vpc1    = "10.1.0.0/28"
+region2              = "us-west1"
+region2_cidr_mgmt    = "10.0.0.16/28"
+region2_cidr_untrust = "10.0.1.16/28"
+region2_cidr_vpc1    = "10.1.0.16/28"
