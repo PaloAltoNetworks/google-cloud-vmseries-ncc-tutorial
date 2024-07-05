@@ -318,7 +318,7 @@ Simulate a regional failure event for `us-east1` by terminating the BGP connecti
     <br>
 
 > [!IMPORTANT]
-> In production environments, it is recommended to have multiple firewalls deployed across different zones within each region.  This approach offers higher redundancy for intra-region failure events.
+> In production environments, it is recommended to have multiple firewalls deployed across different zones in each region.  This approach offers higher redundancy for intra-region failure events.
 
 
 
