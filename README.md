@@ -19,10 +19,10 @@ Below is a diagram of the tutorial.
 <img src="images/diagram.png">
 
 * 3 x VPCs are created (`mgmt`, `untrust`, & `vpc1`), each containing a subnets in `us-east1` & `us-west1`. 
-* 1 x VM-Series is created in each region (`us-east1-vmseries` & `us-west1-vmseries`) with NICs in each VPC. 
+* 1 x VM-Series is created in each region (`us-east1-vmseries` & `us-west1-vmseries`) with a NIC in each VPC. 
 * The firewall's NIC in `vpc1` is connected as a router appliance to a NCC hub.
 * In each region, the firewalls are BGP neighbors with Cloud Routers enabling end-to-end route propagation.
-* In the event of a regional failure, egress traffic from the affected region is automatically rerouted to the firewall in the healthy region through dynamic route propagation.
+* In the event of a regional failure, egress traffic from the affected region in `vpc1` is automatically rerouted to the firewall in the healthy region through dynamic route propagation.
 
 ## Requirements
 
@@ -137,7 +137,7 @@ To access the VM-Series user interface, a password must be set for the `admin` u
 
 ## Review Configuration
 
-Confirm BGP has been established between the VM-Series & Cloud Routers in each region.  Then, verify which routes are being exchanged between the peers.
+Confirm BGP has been established between the VM-Series & Cloud Routers in each region.  Then, verify routes are exchanged between the peers.
 
 >[!NOTE]
 > The Terraform plan creates the Cloud Routers for each region within `vpc1`.  It also bootstraps the VM-Series with a configuration to automatically establish BGP with the cloud routers. 
@@ -146,17 +146,15 @@ Confirm BGP has been established between the VM-Series & Cloud Routers in each r
 
 1. On each VM-Series, go to **Network → Virtual Routers**. 
 
-2. Next to the `gcp-vr`, select **More Runtime Stats**.
+2. Next to `gcp-vr`, select **More Runtime Stats**.
 
     <img src="images/image01.png" width=75%>
 
     > :bulb: **Information** <br> 
-    > The virtual router contains all of routing configurations on the VM-Series.  
-    > <br>
-    > To view the BGP configuration, open `gcp-vr` and select the **BGP** tab.
+    > The virtual router contains all of routing configurations on the VM-Series. To view the BGP configuration, open `gcp-vr` and select the **BGP** tab.
     <br>
 
-3. Go to **BGP → Peer** to view the status of the BGP peering sessions with each region's cloud router.
+3. Click **BGP → Peer** to view the status of the BGP peering sessions with each region's cloud router.
 
     **us-east1**
     <br>
@@ -195,7 +193,7 @@ Confirm BGP has been established between the VM-Series & Cloud Routers in each r
     <img src="images/image07.png" width=75%>
 
     > :bulb: **Information** <br> 
-    > Both firewalls should be exporting a default route for each of their BGP peers on the Cloud Router.
+    > A default route is exported for each Cloud Router's peering interface.
 
 ### Network Connectivity Center Configuration
 
@@ -211,7 +209,6 @@ Confirm BGP has been established between the VM-Series & Cloud Routers in each r
 
     > :bulb: **Information** <br> 
     > The Cloud Router in each region automatically propagates subnet routes to the VM-Series firewalls.
-    <br>
 
 3. Repeat the process for the `vmseries-us-west1-spoke` router appliance.
 
@@ -221,7 +218,7 @@ Confirm BGP has been established between the VM-Series & Cloud Routers in each r
 
 1. In Google Cloud, go to **VPC Network → Routes → Effective Routes**.
     > :bulb: **Information** <br>
-    > This window shows the effective routes for a given VPC, including routes propagated by the VM-Series and Cloud Routers.
+    > This window shows the effective routes for a given VPC, including the propagated routeds. propagated by the VM-Series and Cloud Routers.
     <br>
 
 2. Set **VPC** to `vpc1` & **Region** to `us-west1` to view the effective routes for `us-east1` traffic.
@@ -241,14 +238,14 @@ Confirm BGP has been established between the VM-Series & Cloud Routers in each r
     <br>
 
 ## Generate Outbound Traffic
-Access the workload VMs in each region and initiate outbound traffic and verify traffic originating from `us-east1` travereses the `us-east1-vmseries` and traffic originating from `us-west1` traverses the `us-west1-vmseries`. 
+Access the workload VMs in each region to initiate egress internet traffic.  Then, verify traffic sourced from `us-east1` travereses the `us-east1-vmseries` and traffic sourced from `us-west1` traverses the `us-west1-vmseries`. 
 
 <img src="images/diagram_egress.png">
 
 > [!NOTE]
 > You can redisplay the Terraform output values at anytime by running `terraform output` from the `google-cloud-vmseries-ncc-tutorial` directory. 
 
-1. In Cloud Shell, open two additional tabs: :heavy_plus_sign:. 
+1. In Cloud Shell, open two additional tabs :heavy_plus_sign:. 
 
 2. In the 1st tab, paste the `SSH_VM_REGION1` output to SSH to `us-east1-vm` (`10.1.0.5`).
 
@@ -282,7 +279,7 @@ Access the workload VMs in each region and initiate outbound traffic and verify 
 
 
 ## Simulate Cross-Region Failover
-Simulate aregional failure event for `us-east1` by terminating the BGP connectivity on the `us-east1-vmseries`.  After failover, the dynamic routes using `us-east1-vmseries` will coverge to use to `us-west1-vmseries`.
+Simulate a regional failure event for `us-east1` by terminating the BGP connectivity on the `us-east1-vmseries`.  After failover, the dynamic routes using `us-east1-vmseries` will coverge to use to `us-west1-vmseries`.
 
 <img src="images/diagram_failover.png">
 
@@ -291,7 +288,7 @@ Simulate aregional failure event for `us-east1` by terminating the BGP connectiv
 
 1. On `us-east1-vmseries`, go to **Network → Virtual Routers** and select `gcp-vr`.
 
-2. Click to **BGP** and uncheck **Enable** and click **OK**.
+2. Click **BGP** → uncheck **Enable** → click **OK**.
 
     <img src="images/image14.png" width=70%>
 
